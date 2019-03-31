@@ -1,16 +1,24 @@
 <?php
-class safe{
+/**
+ * Class to Encrypt And Decrypt data
+ *
+ * @author Akeel Ahamed
+ * @link https://github.com/akeelAhamed
+ *
+ * @version V2.0
+ */
+class Secure{
     const METHOD = 'aes-256-ctr';
 
     /**
-     * Encrypts (but does not authenticate) a message
+     * Encrypts the data
      * 
      * @param string $message - plaintext message
      * @param string $key - encryption key (raw binary expected)
-     * @param boolean $encode - set to TRUE to return a base64-encoded 
+     * @param boolean $encode - set to FALSE to prevent base64-encoded 
      * @return string (raw binary)
      */
-    public static function encrypt($message, $key, $encode = false)
+    public static function encrypt($message, $key, $encode = true)
     {
         $nonceSize = openssl_cipher_iv_length(self::METHOD);
         $nonce = openssl_random_pseudo_bytes($nonceSize);
@@ -39,14 +47,14 @@ class safe{
     }
 
     /**
-     * Decrypts (but does not verify) a message
+     * Decrypts the data
      * 
      * @param string $message - ciphertext message
      * @param string $key - encryption key (raw binary expected)
-     * @param boolean $encoded - are we expecting an encoded string?
+     * @param boolean $encoded - set to FALSE to prevent base64-decode
      * @return string
      */
-    public static function decrypt($message, $key, $encoded = false){
+    public static function decrypt($message, $key, $encoded = true){
         if ($encoded) {
          try{
             $message = base64_decode($message, true);
@@ -73,4 +81,14 @@ class safe{
         return $plaintext;
     }
 }
-?>
+
+
+// USAGE
+
+$data_to_encrypt = 'Hello';
+
+$encrypted = Secure::encrypt($data_to_encrypt);
+// OUtput - Encrypted data
+
+$decrypted = Secure::decrypt($encrypted);
+// Output - Hello
